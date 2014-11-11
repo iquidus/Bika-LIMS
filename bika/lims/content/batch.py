@@ -77,6 +77,7 @@ BatchDate = DateTimeField(
     required=False,
     widget=DateTimeWidget(
         label=_('Date'),
+        description=_("Batch order date - Edit if the batch was ordered earlier already"),
     ),
 )
 Client = ReferenceField('Client',
@@ -85,6 +86,7 @@ Client = ReferenceField('Client',
     relationship='BatchClient',
     widget=ReferenceWidget(
         label=_("Client"),
+        description=_("The Client who ordered this batch"),
         size=30,
         visible=True,
         base_query={'inactive_state': 'active'},
@@ -106,6 +108,7 @@ Contact = ReferenceField(
     write_permission=permissions.ModifyPortalContent,
     widget=ReferenceWidget(
         label=_("Contact"),
+        description=_("The Client Contact person for this batch"),
         size=20,
         helper_js=("bika_widgets/referencewidget.js",),
         visible={'edit': 'visible',
@@ -132,6 +135,8 @@ CCContact = ReferenceField(
     write_permission=permissions.ModifyPortalContent,
     widget=ReferenceWidget(
         label=_("CC Contact"),
+        description=_("These Client Contacts will be copied in email communication regarding "
+        + "this batch, e.g. receive emailed results"),
         size=20,
         helper_js=("bika_widgets/referencewidget.js",),
         visible={'edit': 'visible',
@@ -152,6 +157,7 @@ CCEmails = StringField(
     required=0,
     widget=LinesWidget(
         label=_("CC Emails")
+        description=_("Add furher email addresses to be copied"),
     )
 )
 
