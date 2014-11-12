@@ -204,7 +204,7 @@ class BatchWorkflowAction(AnalysisRequestWorkflowAction):
             if objects == {}:
                 pass
             else:
-                its = []
+                its = ""
                 for uid, obj in objects.items():
                     if isActive(obj):
                         its.append(uid);

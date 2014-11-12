@@ -56,6 +56,44 @@ function AnalysisRequestAddView() {
         }
 
 		filterByClient();
+
+        // set profile if acquired from batch
+        var layout = $("input[id='layout']").val();
+
+        for (var arnum = 0; arnum < parseInt($("#ar_count").val()); arnum++) {
+            if (layout == 'columns') {
+                
+                if ($("#ar_" + arnum + "_Profile").val() !== "") {
+                    $.ajaxSetup({async:false});
+                    setAnalysisProfile(arnum, $("#ar_" + arnum + "_Profile").val());
+                    
+                    reset_spec_fields(arnum);
+                    set_specs(arnum);
+                    //calculate_parts(arnum);
+                    $.ajaxSetup({async:true});
+                }
+                
+            } else { // layout = rows
+                //setAnalysisProfile(arnum, $("#Profile").val());
+            }
+        }
+        
+        for (var arnum2 = 0; arnum2 < parseInt($("#ar_count").val()); arnum2++) {
+            if (layout == 'columns') {
+                if ($("#ar_" + arnum2 + "_SampleType").val() !== "") {
+                    $.ajaxSetup({async:false});
+                    set_Specification_from_SampleType(arnum2);                
+                    // Fix filter for Specs to exclude Spec with non matching sample type
+                    modify_Specification_field_filter(arnum2);
+                    // Fix the spec values to reflect the new specification ranges
+                    set_specs(arnum2);
+                    $.ajaxSetup({async:true});
+                }
+            } else {
+
+            }
+        }
+
 	}
 
 
@@ -1051,9 +1089,11 @@ function AnalysisRequestAddView() {
                 if (layout == 'columns') {
                     $("input[name*='Analyses']").unbind();
                     $("input[name*='Analyses']").bind("change", service_checkbox_change);
+                    $("input[name*='Analyses']").bind("click", service_checkbox_click);
                 } else {
                     $("input[name*='cb']").unbind();
                     $("input[class='cb']").bind("change", service_checkbox_change);
+                    $("input[class='cb']").bind("click", service_checkbox_click);
                 };
                 if(selectedservices!=[]){
                     recalc_prices(arnum);
@@ -1619,8 +1659,8 @@ function AnalysisRequestAddView() {
         /*jshint validthis:true */
         var arnum = $(this).attr("arnum");
         var element = $(this);
-        unsetAnalysisProfile(arnum);
-        unsetTemplate(arnum);
+        //unsetAnalysisProfile(arnum);
+        //unsetTemplate(arnum);
 
         // Unselecting Dry Matter Service unsets 'Report Dry Matter'
         if ($(this).val() == $("#getDryMatterService").val() && !$(this).prop("checked")) {
@@ -1641,6 +1681,13 @@ function AnalysisRequestAddView() {
         }
         calculate_parts(arnum);
         toggle_spec_fields(element);
+    }
+
+    function service_checkbox_click(){
+        // Clear profile and template when manual changes are made to services
+        var arnum = $(this).attr("arnum");
+        unsetAnalysisProfile(arnum);
+        unsetTemplate(arnum);
     }
 
     function clickAnalysisCategory(){
